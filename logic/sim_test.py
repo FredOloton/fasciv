@@ -10,5 +10,7 @@ def main():
         print("e1: " + str(e1.intelligence))
         print("e2: " + str(e2.intelligence))
 
+    e1.logger.check_logs()
+
 if __name__ == "__main__":
     main()
