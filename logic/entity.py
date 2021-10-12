@@ -1,5 +1,7 @@
 import random
 from math import floor
+from datetime import datetime
+
 
 # random hex number generator
 def hex_id_gen(digit_amount = 10):
@@ -13,6 +15,7 @@ def hex_id_gen(digit_amount = 10):
     return str(hex(floor(random_number * base_hex_number)))[3:]
 
 class Entity():
+    group = None
     id = None
     dexterity = 0
     intelligence = 0
@@ -20,8 +23,13 @@ class Entity():
     color = None
     logger = None
 
-    def __init__(self):
+    def __init__(self, group = None, dexterity = 0, intelligence = 0, strength = 0, color = "grey"):
         self.id = hex_id_gen()
+        self.group = group
+        self.dexterity = dexterity
+        self.intelligence = intelligence
+        self.strength = strength
+        self.color= color
         self.logger = EntityActionLog(self)
         return
 
@@ -62,6 +70,7 @@ class EntityActionLog():
             {
             "name": function_name,
             "paremeters": parameters,
+            "time": datetime.now()
             }
         )
 
@@ -69,7 +78,36 @@ class EntityActionLog():
         for i in range(len(self.log)):
             print(self.log[i])
 
-class EntitGroup:
-    member_id_list = []
+class EntityGroup:
+    # contains the status between this group and other groups
+    id = None
+    opinions = []
+    member_list = []    
+    mutation_factor = 0
+
     def __init__(self):
-        pass
+        self.id = hex_id_gen()
+        return
+    
+    def add_entities(self, entities):
+        for entity in entities:
+            entity.group = self
+            self.member_list.append(entity)
+
+    def remove_entities(self, entities):
+        for entity in entities:
+            self.member_list.remove(entity)
+
+
+class EntityFactory:
+    color = None
+    def __init__(self, color = "red"):
+        self.color = color
+        self.id = hex_id_gen()
+
+    def generate(self, amount =1, dexterity = 0, intelligence = 0, strength = 0,):
+        entities = []
+        for i in range(amount):
+            new_entity = Entity(dexterity = dexterity, intelligence = intelligence, strength = strength, color= self.color)
+            entities.append(new_entity)
+        return entities
