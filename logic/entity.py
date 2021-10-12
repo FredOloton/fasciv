@@ -1,3 +1,12 @@
+import random
+from math import floor
+
+# random 6 digit hex number generator
+def six_hex_gen():
+    #multiply hex by a random number
+    #then strip it from it's hex marker and the first digit
+    return str(hex(floor((1 + random.uniform(0, 1) ) * 0x1000000)))[3:]
+
 class EntityActionLog():
     entity = None
     function_map = None
@@ -23,6 +32,7 @@ class EntityActionLog():
             print(self.log[i])
 
 class Entity():
+    id = -1
     dexterity = 0
     intelligence = 0
     strength = 0
@@ -30,6 +40,7 @@ class Entity():
     logger = None
 
     def __init__(self):
+        self.id = six_hex_gen()
         self.logger = EntityActionLog(self)
         return
 
