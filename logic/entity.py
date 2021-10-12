@@ -15,14 +15,6 @@ def hex_id_gen(digit_amount = 10):
     return str(hex(floor(random_number * base_hex_number)))[3:]
 
 class Entity():
-    group = None
-    id = None
-    dexterity = 0
-    intelligence = 0
-    strength = 0
-    color = None
-    logger = None
-
     def __init__(self, group = None, dexterity = 0, intelligence = 0, strength = 0, color = "grey"):
         self.id = hex_id_gen()
         self.group = group
@@ -38,7 +30,8 @@ class Entity():
         + "\n|  Dexterity: " + str(self.dexterity)
         + "\n|  Intelligence: " + str(self.intelligence)
         + "\n|  Strength: " + str(self.strength)
-        + "\n|  Color: " + str(self.color))
+        + "\n|  Color: " + str(self.color)
+        + "\n")
         return s
 
     def displace(self):
@@ -53,10 +46,46 @@ class Entity():
     def nourish(self):
         return
 
+class EntityGroup:
+    # contains the status between this group and other groups
+    def __init__(self):
+        self.id = hex_id_gen()        
+        self.opinions = []
+        self.member_list = []    
+        self.mutation_factor = 0
+        return
+    
+    def __str__(self):
+        s = ("----------------------------\n Group#" + self.id + "\n")        
+        for e in self.member_list:
+            s += str(e)
+        return s
+    def add_entities(self, entities):
+        for entity in entities:
+            entity.group = self
+            self.member_list.append(entity)
+
+    def remove_entities(self, entities):
+        for entity in entities:
+            self.member_list.remove(entity)
+
+    def selectRandomMember(self):
+        return self.member_list[random.randrange(len(self.member_list) - 1)]
+
+class EntityFactory:
+    def __init__(self, color = "red"):
+        self.color = color
+        self.id = hex_id_gen()
+
+    def generate(self, amount =1, dexterity = 0, intelligence = 0, strength = 0,):
+        entities = []
+        for i in range(amount):
+            new_entity = Entity(dexterity = dexterity, intelligence = intelligence, strength = strength, color= self.color)
+            entities.append(new_entity)
+        return entities
+
+
 class EntityActionLog():
-    entity = None
-    function_map = None
-    log = []
     def __init__(self, entity):
         self.entity = entity
         self.function_map = {
@@ -64,6 +93,8 @@ class EntityActionLog():
             "communicate": self.entity.communicate,
             "nourish": self.entity.nourish,
             }
+        
+        self.log = []
     
     def add_log(self,function_name, parameters):
         self.log.append(
@@ -77,37 +108,3 @@ class EntityActionLog():
     def check_logs(self):
         for i in range(len(self.log)):
             print(self.log[i])
-
-class EntityGroup:
-    # contains the status between this group and other groups
-    id = None
-    opinions = []
-    member_list = []    
-    mutation_factor = 0
-
-    def __init__(self):
-        self.id = hex_id_gen()
-        return
-    
-    def add_entities(self, entities):
-        for entity in entities:
-            entity.group = self
-            self.member_list.append(entity)
-
-    def remove_entities(self, entities):
-        for entity in entities:
-            self.member_list.remove(entity)
-
-
-class EntityFactory:
-    color = None
-    def __init__(self, color = "red"):
-        self.color = color
-        self.id = hex_id_gen()
-
-    def generate(self, amount =1, dexterity = 0, intelligence = 0, strength = 0,):
-        entities = []
-        for i in range(amount):
-            new_entity = Entity(dexterity = dexterity, intelligence = intelligence, strength = strength, color= self.color)
-            entities.append(new_entity)
-        return entities
